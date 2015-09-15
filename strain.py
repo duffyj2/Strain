@@ -147,17 +147,13 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
   return g
 
 
-    
-
-
-
 
 if __name__ == "__main__":
-  t1,t2 = SHoppingA(Seps,Ssigma)
-  for nE,m1,n1,m2,n2,s,E in [[6,1,-1,4,3,1,1.2+1j*eta],[7,5,4,0,-1,-1,-0.5+1j*eta],[9,-1,0,-3,0,-1,1.5+1j*eta],[4,1,-1,1,-1,1,-0.1+1j*eta],[3,0,-2,1,-1,0,-0.5-1j*eta]]:
-    print gSGNRIntegral(nE,m1,n1,m2,n2,s,E)
+  t1,t2 = SHoppingZ(Seps,Ssigma)
+  
+  for nE,m1,n1,m2,n2,s,E in [[5,1,0,1,0,1.3+1j*eta]]
     print gSGNR(nE,m1,n1,m2,n2,s,E)
-    print 
+
   
   
   #s = 1

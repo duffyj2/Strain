@@ -462,14 +462,24 @@ def DOSTemp(N,E,ImpList=[]):
   return -gS.imag/(N*pi)
 
 
-if __name__ == "__main__":  
-  N = 62
-  t1,t2 = SHoppingZ(Seps,Ssigma)
-    
-  Elist = np.linspace(-0.1+1j*eta,0.1+1j*eta,201)
-  Dlist = [DOSTemp(N,E) for E in Elist]
-  pl.plot(Elist.real,Dlist)
-  pl.savefig("plot.png")
-  pl.show()
+def GFTest():
+  gL,gR,VLR,VRL = Leads(N,E,t1,t2)
+  HI = HArmStrip(N,SubsList=ImpList,t1=t1,t2=t2)
+  gI = gGen(E,HI)[:2*N,:2*N]
+  
+  gL = RecAdd(gL,gI,VLR,VRL)
+  gR = RecAdd(gL,gR,VLR,VRL)
+  return gR[0,0]
 
+
+if __name__ == "__main__":  
+  N = 8
+  t1,t2 = SHoppingZ(Seps,Ssigma)
+  ImpList = []
+  E = 1.2 + 1j*eta
+  
+  print GFTest()
+    
+
+  
 	
