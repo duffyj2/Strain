@@ -147,12 +147,13 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
   return g
 
 
-
 if __name__ == "__main__":
   t1,t2 = SHoppingZ(Seps,Ssigma)
-  
-  for nE,m1,n1,m2,n2,s,E in [[5,1,0,1,0,1.3+1j*eta]]
-    print gSGNR(nE,m1,n1,m2,n2,s,E)
+  nE,m1,n1,m2,n2,s = 6,3,0,1,0,0
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  glist = np.array([gSGNR(nE,m1,n1,m2,n2,s,E) for E in Elist])
+  pl.plot(Elist.real,glist.real)
+  pl.show()
 
   
   

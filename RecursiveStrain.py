@@ -211,7 +211,7 @@ def Leads(N,E,t1,t2):
   """Gets the semi-infinte leads for an armchair nanoribbon of width N.
   Also returns the connection matrices, because we always seem to need them."""
   HC = HArmStrip(N,p=1,t1=t1,t2=t2)
-  VLR, VRL = VArmStrip(N,t2)	
+  VLR, VRL = VArmStrip(N,t2=t2)	
   gC = gGen(E,HC)
   gL = RubioSancho(gC,VRL,VLR)
   gR = RubioSancho(gC,VLR,VRL)
@@ -454,7 +454,7 @@ def ConcentrationPlot(N,p,E):
 def DOSTemp(N,E,ImpList=[]):
   """Get the DOS of a strip in the ribbon"""
   gL,gR,VLR,VRL = Leads(N,E,t1,t2)
-  HI = HArmStrip(N,SubsList=ImpList,t1=t,t2=t)
+  HI = HArmStrip(N,SubsList=ImpList,t1=t1,t2=t2)
   gI = gGen(E,HI)[:2*N,:2*N]
   
   gL = RecAdd(gL,gI,VLR,VRL)
@@ -462,23 +462,17 @@ def DOSTemp(N,E,ImpList=[]):
   return -gS.imag/(N*pi)
 
 
-def GFTest():
+def GFTest(N,E):
   gL,gR,VLR,VRL = Leads(N,E,t1,t2)
-  HI = HArmStrip(N,SubsList=ImpList,t1=t1,t2=t2)
-  gI = gGen(E,HI)[:2*N,:2*N]
-  
-  gL = RecAdd(gL,gI,VLR,VRL)
   gR = RecAdd(gL,gR,VLR,VRL)
-  return gR[0,0]
+  return gR
 
 
 if __name__ == "__main__":  
-  N = 8
+  N = 4
   t1,t2 = SHoppingZ(Seps,Ssigma)
-  ImpList = []
-  E = 1.2 + 1j*eta
-  
-  print GFTest()
+  E = 1.2+1j*eta
+  print GFTest(N,E)[0,N+2]
     
 
   
