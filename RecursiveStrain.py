@@ -14,24 +14,25 @@ Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
 
 
-def strainZ(Seps,Ssigma):
-  """Gets the correct bond length ratios for zigzag strain"""
-  ratio1 = 1.0 + 3.0*Seps/4.0 - Seps*Ssigma/4.0	# R1/R0
-  ratio2 = 1.0-Seps*Ssigma	# R2/R0
-  return ratio1, ratio2
-
-
-def strainA(Seps,Ssigma):
-  """Gets the correct bond length ratios for armchair strain"""
-  ratio1 = 1.0 + Seps/4.0 - 3.0/4.0*Seps*Ssigma	# R1/R0
-  ratio2 = 1.0-Seps*Ssigma	# R2/R0
-  return ratio1, ratio2
-
-
-def SHopping(ratio1,ratio2):
+def SHoppingGen(ratio1,ratio2):
+  """Calculates the hopping integrals t1, t2 given the ratio of the relevant bond lengths to the pristine length."""
   t1 = t*expRe(-Salpha*(ratio1-1.0))
   t2 = t*expRe(-Salpha*(ratio2-1.0))
   return t1, t2
+
+
+def SHoppingZ(Seps,Ssigma):
+  """Gets the correct bond length ratios for zigzag strain"""
+  ratio1 = 1.0 + 3.0*Seps/4.0 - Seps*Ssigma/4.0	# R1/R0
+  ratio2 = 1.0-Seps*Ssigma	# R2/R0
+  return SHoppingGen(ratio1,ratio2)
+
+
+def SHoppingA(Seps,Ssigma):
+  """Gets the correct bond length ratios for armchair strain"""
+  ratio1 = 1.0 + Seps/4.0 - 3.0/4.0*Seps*Ssigma	# R1/R0
+  ratio2 = 1.0-Seps*Ssigma	# R2/R0
+  return SHoppingGen(ratio1,ratio2)
 
 
 def choose(n, k):
@@ -450,15 +451,26 @@ def ConcentrationPlot(N,p,E):
 
 
 
+def DOSTemp(E):
+  """Get the DOS of a strip in the ribbon"""
+  gL,gR,VLR,VRL = Leads(N,E,t1,t2)
+  HI = HArmStrip(N,SubsList=ImpList,t1=t,t2=t)
+  gI = gGen(E,HI)[:2*N,:2*N]
+  
+  gL = RecAdd(gL,gI,VLR,VRL)
+  gS = np.trace(RecAdd(gL,gR,VLR,VRL)[:N,:N])	# Sum of N GFs along the strip
+  return -gS.imag/(N*pi)
+
+
 if __name__ == "__main__":  
   N = 8
-  p = 1
   ImpList = [0]
-  ratio1, ratio2 = strainZ(Seps,Ssigma)
-  t1,t2 = SHopping(ratio1,ratio2)
-  Elist = np.linspace(-3.0,3.0,201)
-  Klist = [KuboSubs(N,p,E,ImpList,t1,t2) for E in Elist]
-  pl.plot(Elist,Klist)
+  t1,t2 = SHoppingZ(Seps,Ssigma)
+    
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  Dlist = [DOSTemp(E) for E in Elist]
+  pl.plot(Elist.real,Dlist)
+  pl.savefig("plot.png")
   pl.show()
 
 	

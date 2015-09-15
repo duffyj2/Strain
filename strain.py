@@ -80,7 +80,7 @@ def gSBulk(m,n,s,E):
   return C_int(gI,-pi/2,pi/2)
 
 
-def gSGNR(nE,m1,n1,m2,n2,s,E):
+def gSGNRIntegral(nE,m1,n1,m2,n2,s,E):
   """Calculates the GF of a GNR for a strained system, without the integral being performed analytically"""
   def gI(kA):  
     if s == 0:
@@ -100,13 +100,13 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
   return g/(pi*nE)
 
 
-def gTest(nE,m1,n1,m2,n2,s,E):
+def gSGNR(nE,m1,n1,m2,n2,s,E):
   """Calculates the GF for a nanoribbon, want to incorporate strain at some point"""
   def gterm(ky):
-    q = acos( (E**2 - t**2 - 4.0*t**2 *cos(ky)**2)/(4.0*t**2 *cos(ky) ) )  
+    q = acos( (E**2 - t2**2 - 4.0*t1**2 *cos(ky)**2)/(4.0*t1*t2 *cos(ky) ) )
     if q.imag < 0.0: q = -q
 
-    Const = 1j/(2.0*nE*t**2)
+    Const = 1j/(2.0*nE*t1*t2)
     Den = cos(ky)*sin(q)
 
     if s == 0:
@@ -121,7 +121,7 @@ def gTest(nE,m1,n1,m2,n2,s,E):
       ft = 1.0 + 2.0*cos(ky)*exp(-sig*1j*q)
       return Const*t*ft*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
     else:
-      print 'Sublattice error in gTest'
+      print 'Sublattice error in gSGNR'
   
   def limit_term(ky):
     if s == 0:
@@ -129,7 +129,7 @@ def gTest(nE,m1,n1,m2,n2,s,E):
     elif (s == 1) or (s == -1):
       N_ab = t
     else:
-      print 'Sublattice error in gTest'
+      print 'Sublattice error in gSGNR'
       
     return 2.0*N_ab*sin(ky*(m2-n2))*sin(ky*(m1-n1))/( nE*( E**2 - t**2 ) )
   
@@ -153,10 +153,10 @@ def gTest(nE,m1,n1,m2,n2,s,E):
 
 
 if __name__ == "__main__":
-  t1 = t2 = t
+  t1,t2 = SHoppingA(Seps,Ssigma)
   for nE,m1,n1,m2,n2,s,E in [[6,1,-1,4,2,0,-0.5+1j*eta],[7,7,4,0,-1,1,-0.5+1j*eta],[9,1,0,3,0,-1,-0.5+1j*eta],[4,0,-1,0,-1,1,-0.5+1j*eta],[3,0,-2,0,-1,0,-0.5+1j*eta]]:
+    print gSGNRIntegral(nE,m1,n1,m2,n2,s,E)
     print gSGNR(nE,m1,n1,m2,n2,s,E)
-    print gTest(nE,m1,n1,m2,n2,s,E)
     print 
   
   
