@@ -114,12 +114,12 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
       return Const*E*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
     elif s == 1:
       sig = copysign(1,m2+n2-m1-n1)
-      f = 1.0 + 2.0*cos(ky)*exp(sig*1j*q)
-      return Const*t*f*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
+      f = t2 + 2.0*t1*cos(ky)*exp(sig*1j*q)
+      return Const*f*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
     elif s == -1:
       sig = copysign(1,m2+n2-m1-n1-1)
-      ft = 1.0 + 2.0*cos(ky)*exp(-sig*1j*q)
-      return Const*t*ft*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
+      ft = t2 + 2.0*t1*cos(ky)*exp(-sig*1j*q)
+      return Const*ft*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
     else:
       print 'Sublattice error in gSGNR'
   
@@ -127,11 +127,11 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
     if s == 0:
       N_ab = E
     elif (s == 1) or (s == -1):
-      N_ab = t
+      N_ab = t2
     else:
       print 'Sublattice error in gSGNR'
       
-    return 2.0*N_ab*sin(ky*(m2-n2))*sin(ky*(m1-n1))/( nE*( E**2 - t**2 ) )
+    return 2.0*N_ab*sin(ky*(m2-n2))*sin(ky*(m1-n1))/( nE*( E**2 - t2**2 ) )
   
   g = 0.0
   if nE % 2 == 0:
@@ -154,7 +154,7 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
 
 if __name__ == "__main__":
   t1,t2 = SHoppingA(Seps,Ssigma)
-  for nE,m1,n1,m2,n2,s,E in [[6,1,-1,4,2,0,-0.5+1j*eta],[7,7,4,0,-1,1,-0.5+1j*eta],[9,1,0,3,0,-1,-0.5+1j*eta],[4,0,-1,0,-1,1,-0.5+1j*eta],[3,0,-2,0,-1,0,-0.5+1j*eta]]:
+  for nE,m1,n1,m2,n2,s,E in [[6,1,-1,4,3,1,1.2+1j*eta],[7,5,4,0,-1,-1,-0.5+1j*eta],[9,-1,0,-3,0,-1,1.5+1j*eta],[4,1,-1,1,-1,1,-0.1+1j*eta],[3,0,-2,1,-1,0,-0.5-1j*eta]]:
     print gSGNRIntegral(nE,m1,n1,m2,n2,s,E)
     print gSGNR(nE,m1,n1,m2,n2,s,E)
     print 

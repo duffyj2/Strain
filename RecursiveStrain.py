@@ -451,7 +451,7 @@ def ConcentrationPlot(N,p,E):
 
 
 
-def DOSTemp(E):
+def DOSTemp(N,E,ImpList=[]):
   """Get the DOS of a strip in the ribbon"""
   gL,gR,VLR,VRL = Leads(N,E,t1,t2)
   HI = HArmStrip(N,SubsList=ImpList,t1=t,t2=t)
@@ -463,12 +463,11 @@ def DOSTemp(E):
 
 
 if __name__ == "__main__":  
-  N = 8
-  ImpList = [0]
+  N = 62
   t1,t2 = SHoppingZ(Seps,Ssigma)
     
-  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
-  Dlist = [DOSTemp(E) for E in Elist]
+  Elist = np.linspace(-0.1+1j*eta,0.1+1j*eta,201)
+  Dlist = [DOSTemp(N,E) for E in Elist]
   pl.plot(Elist.real,Dlist)
   pl.savefig("plot.png")
   pl.show()
