@@ -87,7 +87,7 @@ def ImpConvert(p,ImpListMess):
 
 
 
-def HArmStrip(N,p=1,SubsList=[],TopList=[],CenterList=[],t1=t,t2=t):
+def HArmStrip(N,p=1,SubsList=[],TopList=[],CenterList=[]):
   """Creates the Hamiltonian for an armchair strip N atoms across and p "unit cells" in width.
   Populates it with whatever impurities you desire.
   Matrix order is Prisine->Top->Center."""
@@ -128,7 +128,7 @@ def gGen(E,H):
 
 
 
-def VArmStrip(N,t2=t):
+def VArmStrip(N):
   """Calculates the LR and RL connection matrices for the armchair strip."""
   VLR, VRL = np.zeros([2*N,2*N]),np.zeros([2*N,2*N])
   for i in range(1,N,2):
@@ -136,7 +136,7 @@ def VArmStrip(N,t2=t):
   return VLR, VRL
 
 
-def VArmStripBigLSmallR(N,p,t2=t):
+def VArmStripBigLSmallR(N,p):
   """Connection matrices for the RIGHT SIDE of the Big Strip to the LEFT SIDE of the regular strip."""
   VLR = np.zeros((2*N*p,2*N))
   VRL = np.zeros((2*N,2*N*p))
@@ -145,7 +145,7 @@ def VArmStripBigLSmallR(N,p,t2=t):
   return VLR, VRL
    
    
-def VArmStripSmallLBigR(N,p,t2=t):
+def VArmStripSmallLBigR(N,p):
   """Connection matrices for the LEFT SIDE of the Big Strip to the RIGHT SIDE of the regular strip."""
   VLR = np.zeros((2*N,2*N*p))
   VRL = np.zeros((2*N*p,2*N))
@@ -207,11 +207,11 @@ def RubioSancho(g00,V01,V10,tol=rtol):
   return dot( inv( identity - dot( dot(g00,V01) , Transf)) ,  g00 ) 
 
 
-def Leads(N,E,t1,t2):
+def Leads(N,E):
   """Gets the semi-infinte leads for an armchair nanoribbon of width N.
   Also returns the connection matrices, because we always seem to need them."""
-  HC = HArmStrip(N,p=1,t1=t1,t2=t2)
-  VLR, VRL = VArmStrip(N,t2=t2)	
+  HC = HArmStrip(N,p=1)
+  VLR, VRL = VArmStrip(N)	
   gC = gGen(E,HC)
   gL = RubioSancho(gC,VRL,VLR)
   gR = RubioSancho(gC,VLR,VRL)
@@ -230,18 +230,18 @@ def Kubo(gL,gR,VLR,VRL):
 
 def KuboPristine(N,E):
   """Calculates the conductance of a pristine GNR using the Kubo Formula"""
-  gL,gR,VLR,VRL = Leads(N,E-1j*eta,t1,t2)	# Get the ADVANCED GF
+  gL,gR,VLR,VRL = Leads(N,E-1j*eta)	# Get the ADVANCED GF
   return Kubo(gL,gR,VLR,VRL)
 
 
-def KuboSubs(N,p,E,ImpList,t1,t2):
+def KuboSubs(N,p,E,ImpList):
   """Calculates the conductance of a GNR with substitutional impurities (given in ImpList) using the Kubo Formula."""
-  gL,gR,VLR,VRL = Leads(N,E-1j*eta,t1,t2)
+  gL,gR,VLR,VRL = Leads(N,E-1j*eta)
   # Scattering region and connection matrices 
-  HM = HArmStrip(N,p,SubsList=ImpList,t1=t1,t2=t2)
+  HM = HArmStrip(N,p,SubsList=ImpList)
   gM = gGen(E-1j*eta,HM)
-  VbLsR, VsRbL = VArmStripBigLSmallR(N,p,t2=t2)		# Notation VbLsR means a big strip on the left connects to a small strip on the right
-  VsLbR, VbRsL = VArmStripSmallLBigR(N,p,t2=t2)
+  VbLsR, VsRbL = VArmStripBigLSmallR(N,p)		# Notation VbLsR means a big strip on the left connects to a small strip on the right
+  VsLbR, VbRsL = VArmStripSmallLBigR(N,p)
 
   # Calculate the advanced GFs
   GR = RecAdd(gR,gM,VsRbL,VbLsR)[:2*N,:2*N]	# The new rightmost cell
@@ -453,8 +453,8 @@ def ConcentrationPlot(N,p,E):
 
 def DOSTemp(N,E,ImpList=[]):
   """Get the DOS of a strip in the ribbon"""
-  gL,gR,VLR,VRL = Leads(N,E,t1,t2)
-  HI = HArmStrip(N,SubsList=ImpList,t1=t1,t2=t2)
+  gL,gR,VLR,VRL = Leads(N,E)
+  HI = HArmStrip(N,SubsList=ImpList)
   gI = gGen(E,HI)[:2*N,:2*N]
   
   gL = RecAdd(gL,gI,VLR,VRL)
@@ -463,16 +463,21 @@ def DOSTemp(N,E,ImpList=[]):
 
 
 def GFTest(N,E):
-  gL,gR,VLR,VRL = Leads(N,E,t1,t2)
+  gL,gR,VLR,VRL = Leads(N,E)
   gR = RecAdd(gL,gR,VLR,VRL)
   return gR
 
 
 if __name__ == "__main__":  
-  N = 4
-  t1,t2 = SHoppingZ(Seps,Ssigma)
-  E = 1.2+1j*eta
-  print GFTest(N,E)[0,N+2]
+  N = 5
+  #E = 1.2 + 1j*eta
+  t1 = t2 = t
+  #print GFTest(N,E)[0,0]
+  
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  Glist = [GFTest(N,E)[0,0] for E in Elist]
+  pl.plot(Elist.real,Glist)
+  pl.show()
     
 
   

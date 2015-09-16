@@ -1,5 +1,4 @@
 from GF import *
-from Recursive import *
 from math import exp as expRe
 from scipy.integrate import dblquad
 
@@ -148,8 +147,9 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
 
 
 if __name__ == "__main__":
-  t1,t2 = SHoppingZ(Seps,Ssigma)
-  nE,m1,n1,m2,n2,s = 6,3,0,1,0,0
+  t1 = t2 = t
+  #t1,t2 = SHoppingZ(Seps,Ssigma)
+  nE,m1,n1,m2,n2,s = 6,1,0,1,0,0
   Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
   glist = np.array([gSGNR(nE,m1,n1,m2,n2,s,E) for E in Elist])
   pl.plot(Elist.real,glist.real)
