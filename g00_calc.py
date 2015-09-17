@@ -145,30 +145,32 @@ size = 8
 
 
 #for size in xrange(8,9,4):
-for strain in np.arange(0.00,0.001,0.01):
+#for strain in np.arange(0.00,0.001,0.01):
 #for strain in [0.0]:
-    t1, t2 = setValues(strain,np.pi/2.0)
-    I = np.identity(2*size+1)
-    H00 = H_build(t1,t2)
-    VRL = VRL_build(t1,t2)
-    VLR = np.transpose(VRL)
-#    os.makedirs( str(strain))
-#    SLdic = shelve.open(str(strain)+'/SL.db', writeback = True)
-#    SRdic = shelve.open(str(strain)+'/SR.db', writeback = True)
-#    fldos = open('cond_and_ldos_'+str(strain)+'.dat','w')    
-    SLdic = {}
-    SRdic = {}
-    for Energy in np.arange(-3.0,3.01,0.01):
-    	SLoriginal = right_lead(Energy, H00, VLR, VRL)
-    	SRoriginal = left_lead(Energy, H00, VLR, VRL)
+strain = 0.05
+t1, t2 = setValues(strain,np.pi/2.0)
+print t1,t2
+    #I = np.identity(2*size+1)
+    #H00 = H_build(t1,t2)
+    #VRL = VRL_build(t1,t2)
+    #VLR = np.transpose(VRL)
+##    os.makedirs( str(strain))
+##    SLdic = shelve.open(str(strain)+'/SL.db', writeback = True)
+##    SRdic = shelve.open(str(strain)+'/SR.db', writeback = True)
+##    fldos = open('cond_and_ldos_'+str(strain)+'.dat','w')    
+    #SLdic = {}
+    #SRdic = {}
+    #for Energy in np.arange(-3.0,3.01,0.01):
+    	#SLoriginal = right_lead(Energy, H00, VLR, VRL)
+    	#SRoriginal = left_lead(Energy, H00, VLR, VRL)
     
-    	SLdic[str(Energy)] = SLoriginal
-    	SRdic[str(Energy)] = SRoriginal
+    	#SLdic[str(Energy)] = SLoriginal
+    	#SRdic[str(Energy)] = SRoriginal
     
-    	G = np.dot(invert(I - np.dot(np.dot(SLoriginal,VLR),np.dot(SRoriginal, VRL))),SLoriginal)
-    	ldos = (-2.0/np.pi)*G[size/2,size/2].imag
-        cond = conductance_pristine(Energy, H00, VLR, VRL, SLoriginal, SRoriginal)
-#    	print Energy, ldos , cond, strain
-        print Energy, G[0][0].real, G[0][0].imag
+    	#G = np.dot(invert(I - np.dot(np.dot(SLoriginal,VLR),np.dot(SRoriginal, VRL))),SLoriginal)
+    	#ldos = (-2.0/np.pi)*G[size/2,size/2].imag
+        #cond = conductance_pristine(Energy, H00, VLR, VRL, SLoriginal, SRoriginal)
+##    	print Energy, ldos , cond, strain
+        #print Energy, G[0][0].real, G[0][0].imag
  #       fldos.write( str(Energy) + '\t' + str(ldos) + '\t' + str(cond) + '\n')
         

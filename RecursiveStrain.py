@@ -9,7 +9,7 @@ from itertools import combinations
 from math import exp as expRe
 
 rtol = 1.0e-8		# Default tolerance for recursive methods. This tolerance is chosen to eliminate the zero, and is picked purely by observation. 
-Seps = 0.05	# The epsilon for strain
+Seps = 0.2	# The epsilon for strain
 Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
 
@@ -24,14 +24,14 @@ def SHoppingGen(ratio1,ratio2):
 def SHoppingZ(Seps,Ssigma):
   """Gets the correct bond length ratios for zigzag strain"""
   ratio1 = 1.0 + 3.0*Seps/4.0 - Seps*Ssigma/4.0	# R1/R0
-  ratio2 = 1.0-Seps*Ssigma	# R2/R0
+  ratio2 = 1.0 - Seps*Ssigma	# R2/R0
   return SHoppingGen(ratio1,ratio2)
 
 
 def SHoppingA(Seps,Ssigma):
   """Gets the correct bond length ratios for armchair strain"""
   ratio1 = 1.0 + Seps/4.0 - 3.0/4.0*Seps*Ssigma	# R1/R0
-  ratio2 = 1.0-Seps*Ssigma	# R2/R0
+  ratio2 = 1.0 + Seps	# R2/R0
   return SHoppingGen(ratio1,ratio2)
 
 
@@ -469,9 +469,9 @@ def GFTest(N,E):
 
 
 if __name__ == "__main__":  
-  N = 8
+  N = 4
   #t1 = t2 = t
-  t1,t2 = SHoppingA(Seps,Ssigma)
+  t1,t2 = SHoppingZ(Seps,Ssigma)
 
   
   #Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
@@ -482,13 +482,8 @@ if __name__ == "__main__":
   #pl.plot(Elist.real,Glist)
   #pl.show()
   
-  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,601)
-  Glist = np.array([GFTest(N,E)[0,0] for E in Elist])
-  pl.plot(Elist.real,Glist.imag)
-  
-  E,gre,gim = np.loadtxt("g00_edge_site_0_strain_5_percent.dat").T
-  pl.plot(E,gim)
-  pl.show()
-
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  Glist = np.array([GFTest(N,E)[N+2,0] for E in Elist])
+  pl.savetxt("test.dat",[Elist.real,Glist.real,Glist.imag])
   
 	
