@@ -9,7 +9,7 @@ from itertools import combinations
 from math import exp as expRe
 
 rtol = 1.0e-8		# Default tolerance for recursive methods. This tolerance is chosen to eliminate the zero, and is picked purely by observation. 
-Seps = 0.001	# The epsilon for strain
+Seps = 0.05	# The epsilon for strain
 Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
 
@@ -469,19 +469,26 @@ def GFTest(N,E):
 
 
 if __name__ == "__main__":  
-  N = 5
+  N = 8
   #t1 = t2 = t
-  t1,t2 = SHoppingZ(Seps,Ssigma)
+  t1,t2 = SHoppingA(Seps,Ssigma)
 
   
-  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
-  Glist = np.array([GFTest(N,E)[0,0] for E in Elist])
-  np.savetxt("Re.txt",[Elist.real,Glist.real])
-  np.savetxt("Im.txt",[Elist.real,Glist.imag])
+  #Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  #Glist = np.array([GFTest(N,E)[0,0] for E in Elist])
+  #np.savetxt("Re.txt",[Elist.real,Glist.real])
+  #np.savetxt("Im.txt",[Elist.real,Glist.imag])
   #Elist,Glist = np.loadtxt("array.txt",dtype=complex)
   #pl.plot(Elist.real,Glist)
   #pl.show()
-    
+  
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,601)
+  Glist = np.array([GFTest(N,E)[0,0] for E in Elist])
+  pl.plot(Elist.real,Glist.imag)
+  
+  E,gre,gim = np.loadtxt("g00_edge_site_0_strain_5_percent.dat").T
+  pl.plot(E,gim)
+  pl.show()
 
   
 	

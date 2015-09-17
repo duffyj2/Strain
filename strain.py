@@ -150,15 +150,16 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
 
 if __name__ == "__main__":
   #t1 = t2 = t
-  t1,t2 = SHoppingZ(Seps,Ssigma)
-  nE,m1,n1,m2,n2,s = 6,1,0,1,0,0
-  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  t1,t2 = SHoppingA(Seps,Ssigma)
+  nE,m1,n1,m2,n2,s = 9,1,0,1,0,0
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,601)
   glist = np.array([gSGNR(nE,m1,n1,m2,n2,s,E) for E in Elist])
   pl.plot(Elist.real,glist.real)
   #pl.plot(Elist.real,glist.imag)
   
-  glist = np.array([gSGNRIntegral(nE,m1,n1,m2,n2,s,E) for E in Elist])
-  pl.plot(Elist.real,glist.real)
+  E,gre,gim = np.loadtxt("g00_edge_site_0_strain_5_percent.dat").T
+  pl.plot(E,gre)
+  pl.show()
   
   
   #Elist,Glist = np.loadtxt("Re.txt")
@@ -166,7 +167,7 @@ if __name__ == "__main__":
   #Elist,Glist = np.loadtxt("Im.txt")
   #pl.plot(Elist,Glist,'o')
   
-  pl.show()
+  #pl.show()
   
 
   
