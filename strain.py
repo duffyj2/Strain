@@ -3,7 +3,7 @@ from RecursiveStrain import *
 from math import exp as expRe
 from scipy.integrate import dblquad
 
-Seps = 0.2	# The epsilon for strain
+Seps = 0.1	# The epsilon for strain
 Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
 
@@ -151,13 +151,13 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
 if __name__ == "__main__":
   #t1 = t2 = t
   t1,t2 = SHoppingZ(Seps,Ssigma)
-  nE,m1,n1,m2,n2,s = 5,2,-1,1,0,1
-  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  nE,m1,n1,m2,n2,s = 9,1,0,1,0,0
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,601)
   glist = np.array([gSGNR(nE,m1,n1,m2,n2,s,E) for E in Elist])
   #pl.plot(Elist.real,glist.real)
   pl.plot(Elist.real,glist.imag)
   
-  E,gre,gim = pl.loadtxt("test.dat")
+  E,gre,gim = np.loadtxt("g00_edge_site_0_strain_10_percent_zig_zag.dat").T
   #pl.plot(E,gre,'o')
   pl.plot(E,gim,'o')
   pl.show()
