@@ -94,11 +94,11 @@ def HArmStrip(N,p=1,SubsList=[],TopList=[],CenterList=[]):
   ntop = len(TopList)	# Number of top adsorbed impurities
   ncenter = len(CenterList)	# Number of center adsorbed impurities
   H = np.zeros((2*N*p+ntop+ncenter,2*N*p+ntop+ncenter))		# Make sure our hamiltonian has space for sites+center+top
-  # nn elements
+  # Vertical elements
   for j in range(0,2*p*N-N+1,N):
     for i in range(j,j+N-1):
       H[i,i+1] = H[i+1,i] = t1
-  # Other elements
+  # Horizontal elements
   for j in range(0,2*p*N-2*N+1,2*N):
     for i in range(j,j+N,2):
       H[i,i+N] = H[i+N,i] = t2
@@ -470,14 +470,17 @@ def GFTest(N,E):
 
 if __name__ == "__main__":  
   N = 5
-  #E = 1.2 + 1j*eta
-  t1 = t2 = t
-  #print GFTest(N,E)[0,0]
+  #t1 = t2 = t
+  t1,t2 = SHoppingZ(Seps,Ssigma)
+
   
   Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
-  Glist = [GFTest(N,E)[0,0] for E in Elist]
-  pl.plot(Elist.real,Glist)
-  pl.show()
+  Glist = np.array([GFTest(N,E)[0,0] for E in Elist])
+  np.savetxt("Re.txt",[Elist.real,Glist.real])
+  np.savetxt("Im.txt",[Elist.real,Glist.imag])
+  #Elist,Glist = np.loadtxt("array.txt",dtype=complex)
+  #pl.plot(Elist.real,Glist)
+  #pl.show()
     
 
   

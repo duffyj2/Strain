@@ -1,4 +1,5 @@
 from GF import *
+from RecursiveStrain import *
 from math import exp as expRe
 from scipy.integrate import dblquad
 
@@ -146,27 +147,26 @@ def gSGNR(nE,m1,n1,m2,n2,s,E):
   return g
 
 
+
 if __name__ == "__main__":
-  t1 = t2 = t
-  #t1,t2 = SHoppingZ(Seps,Ssigma)
+  #t1 = t2 = t
+  t1,t2 = SHoppingZ(Seps,Ssigma)
   nE,m1,n1,m2,n2,s = 6,1,0,1,0,0
   Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
   glist = np.array([gSGNR(nE,m1,n1,m2,n2,s,E) for E in Elist])
   pl.plot(Elist.real,glist.real)
+  #pl.plot(Elist.real,glist.imag)
+  
+  glist = np.array([gSGNRIntegral(nE,m1,n1,m2,n2,s,E) for E in Elist])
+  pl.plot(Elist.real,glist.real)
+  
+  
+  #Elist,Glist = np.loadtxt("Re.txt")
+  #pl.plot(Elist,Glist)
+  #Elist,Glist = np.loadtxt("Im.txt")
+  #pl.plot(Elist,Glist,'o')
+  
   pl.show()
-
   
-  
-  #s = 1
-  #t1,t2 = SHoppingZ(Seps,Ssigma)  
-  #m,n = 20,40
-  #Elist = np.linspace(-0.5+1j*eta,0.5+1j*eta,201)
-  #g1list = np.array([gSBulkDouble(m,n,s,E) for E in Elist])
-  #g2list = np.array([gSBulk(m,n,s,E) for E in Elist])
-  #pl.plot(Elist,g1list.real)
-  #pl.plot(Elist,g1list.imag)
-  #pl.plot(Elist,g2list.real,'o')
-  #pl.plot(Elist,g2list.imag,'o')
-  #pl.show()
 
   
