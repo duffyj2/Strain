@@ -6,8 +6,30 @@ from GF import *
 import random
 from itertools import combinations
 
-rtol = 1.0e-8		# Default tolerance for recursive methods.
-# This tolerance is chosen to eliminate the zero, and is picked purely by observation. 
+rtol = 1.0e-8		# Default tolerance for recursive methods. This tolerance is chosen to eliminate the zero, and is picked purely by observation. 
+Seps = 0.2	# The epsilon for strain
+Ssigma = 0.165		# Poisson's ration in graphene
+Salpha = 3.37		# A strain constant, taken from the literature
+
+def SHoppingGen(ratio1,ratio2):
+  """Calculates the hopping integrals t1, t2 given the ratio of the relevant bond lengths to the pristine length."""
+  t1 = t*expRe(-Salpha*(ratio1-1.0))
+  t2 = t*expRe(-Salpha*(ratio2-1.0))
+  return t1, t2
+
+
+def SHoppingZ(Seps,Ssigma):
+  """Gets the correct bond length ratios for zigzag strain"""
+  ratio1 = 1.0 + 3.0*Seps/4.0 - Seps*Ssigma/4.0	# R1/R0
+  ratio2 = 1.0 - Seps*Ssigma	# R2/R0
+  return SHoppingGen(ratio1,ratio2)
+
+
+def SHoppingA(Seps,Ssigma):
+  """Gets the correct bond length ratios for armchair strain"""
+  ratio1 = 1.0 + Seps/4.0 - 3.0/4.0*Seps*Ssigma	# R1/R0
+  ratio2 = 1.0 + Seps	# R2/R0
+  return SHoppingGen(ratio1,ratio2)
 
 
 def choose(n, k):
@@ -64,10 +86,10 @@ def HArmStrip(N):
   H = np.zeros([2*N,2*N])
   # Adjacent elements
   for i in range(N-1) + range(N,2*N-1):
-    H[i,i+1] = H[i+1,i] = t
+    H[i,i+1] = H[i+1,i] = t1
   # Other elements
   for i in range(0,N,2):
-    H[i,N+i] = H[N+i,i] = t
+    H[i,N+i] = H[N+i,i] = t2
   return H
 
 
@@ -118,7 +140,7 @@ def VArmStrip(N):
   """Calculates the LR and RL connection matrices for the armchair strip."""
   VLR, VRL = np.zeros([2*N,2*N]),np.zeros([2*N,2*N])
   for i in range(1,N,2):
-    VLR[N+i,i] = VRL[i,N+i] = t
+    VLR[N+i,i] = VRL[i,N+i] = t2
   return VLR, VRL
 
 
