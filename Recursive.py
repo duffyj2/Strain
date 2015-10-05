@@ -5,11 +5,13 @@ from numpy import dot
 from GF import *
 import random
 from itertools import combinations
+from math import exp as expRe
 
 rtol = 1.0e-8		# Default tolerance for recursive methods. This tolerance is chosen to eliminate the zero, and is picked purely by observation. 
-Seps = 0.2	# The epsilon for strain
+Seps = 0.01	# The epsilon for strain
 Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
+
 
 def SHoppingGen(ratio1,ratio2):
   """Calculates the hopping integrals t1, t2 given the ratio of the relevant bond lengths to the pristine length."""
@@ -30,6 +32,7 @@ def SHoppingA(Seps,Ssigma):
   ratio1 = 1.0 + Seps/4.0 - 3.0/4.0*Seps*Ssigma	# R1/R0
   ratio2 = 1.0 + Seps	# R2/R0
   return SHoppingGen(ratio1,ratio2)
+
 
 
 def choose(n, k):
@@ -265,7 +268,7 @@ def KuboTop(N,E,BigImpList):
   return Kubo(gL,gR,VLR,VRL)
 
 
-def KuboCenter(N,p,E,ImpList):
+def KuboCenter(N,E,BigImpList):
   """Calculates the conductance of a GNR with top-adsorbed impurities using the Kubo Formula."""
   # Leads
   gL,gR,VLR,VRL = Leads(N,E-1j*eta)	# Gets the advanced GF
@@ -431,18 +434,31 @@ def ConcentrationPlot(N,p,E):
   pl.show()
 
 
+def gGNRrec(N,E):
+  """Gets the GF of a single cell in the connected armchair nanoribbon"""
+  gL,gR,VLR,VRL = Leads(N,E)
+  return RecAdd(gL,gR,VLR,VRL)
+
+
+def DOSGNR(N,E):
+  gav = np.trace(gGNRrec(N,E)[:N,:N])/N
+  return -gav.imag/pi
+
+
 if __name__ == "__main__":  
-  N = 4
-  p = 3
-  nimp = 2
-  niter = 500
-
-  Elist = np.linspace(-3.0,3.0,201)
-  CTlist = [ConfigAvCenterTotal(N,p,nimp,E) for E in Elist]
-  CRlist = [np.average(CACenterRandom(N,p,nimp,niter,E)) for E in Elist]
-  pl.plot(Elist.real,CTlist)
-  pl.plot(Elist.real,CRlist)
+  #t1 = t2 = t
+  t1,t2 = SHoppingA(Seps,Ssigma)
+  N = 32
+  BigImpList = [[2]]
+  
+  Elist = np.linspace(-0.1,0.1,201)
+  KSlist = [KuboSubs(N,E,BigImpList) for E in Elist]
+  KTlist = [KuboTop(N,E,BigImpList) for E in Elist]
+  KClist = [KuboCenter(N,E,BigImpList) for E in Elist]
+  pl.plot(Elist.real,KSlist,label='Subs')
+  pl.plot(Elist.real,KTlist,label='Top')
+  pl.plot(Elist.real,KClist,label='Center')
+  pl.legend()
+  pl.savefig('plot.png')
   pl.show()
-
-
 	
