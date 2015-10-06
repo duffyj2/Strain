@@ -94,28 +94,12 @@ def GMxCenterRec2(N,p,ImpList,E):
 
 
 if __name__ == "__main__":  
-  N = 5
-  p = 1
-  ImpList = [0]
-  E = 1.1+1j*eta
-  print GMxCenterRec2(N,p,ImpList,E)
-  
-  #N = 5
-  #p = 1
-  #ImpList = [0]
-  #Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
-  #glist = np.array([GMxCenterRec2(N,p,ImpList,E)[0,0] for E in Elist])
-  #pl.plot(Elist.real,glist.real)
-  #pl.plot(Elist.real,glist.imag)
-  #pl.show()
-  
-  #nE = N+1
-  #mC = 1
-  #nC = 0
-  #Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
-  #glist = np.array([GMx1Center(nE,mC,nC,E)[0,0] for E in Elist])
-  #pl.plot(Elist.real,glist.real)
-  #pl.show()
+  nE = 9
+  mC, nC = 1,0
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  Glist = [-GMx1Center(nE,mC,nC,E)[6,6].imag/pi for E in Elist]
+  pl.plot(Elist,Glist)
+  pl.show()
     
   
 

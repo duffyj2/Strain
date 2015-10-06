@@ -39,7 +39,7 @@ dtol = 1.0e-6		# Stands for "default tolerance". Could be better
 wf=EF	# This needs a lot of thought/work
 
 # Strain parameters
-Seps = 0.05	# The epsilon for strain
+Seps = 0.00	# The epsilon for strain
 Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
 
