@@ -24,12 +24,31 @@ def gLin_Chain(n,E):
   return 1j*exp(1j*abs(n)*acos(E/(2.0*t)))/(t*sqrt(4.0-E**2/t**2))
 
 
-def gBulk_kZ(m,n,s,E,E0=0.0):
-  """The Graphene Green's function
-    The kZ integration is performed last
-    The E0 is actually kind of useless and starting to annoy me"""
-  GF = partial(FMod.gbulk_kz_int,m,n,s,E,E0,t)
-  return C_int(GF,-pi/2,pi/2)
+def gSBulk(m,n,s,E):
+  """Calculates the graphene GF with strain. Uses only one integral"""
+  def gI(kZ):
+    q = acos( (E**2 - t2**2 - 4.0*t1**2 *cos(kZ)**2)/(4.0*t1*t2 *cos(kZ) ) )
+
+    if q.imag < 0.0: q = -q
+
+    Const = 1j/(4*pi*t1*t2)
+    Den = cos(kZ)*sin(q)
+
+    if s == 0:
+      sig = copysign(1,m+n)
+      return Const*E*exp( 1j*(sig*q*(m+n) + kZ*(m-n) ) )/ Den 
+    elif s == 1:
+      sig = copysign(1,m+n)
+      f = t2 + 2*t1*exp(sig*1j*q)*cos(kZ)
+      return Const*f*exp( 1j*(sig*q*(m+n) + kZ*(m-n) ) )/Den  
+    elif s == -1:
+      sig = copysign(1,m+n-1)
+      ft = t2 + 2*t1*exp(-sig*1j*q)*cos(kZ)
+      return Const*ft*exp( 1j*(sig*q*(m+n) + kZ*(m-n) ) )/Den 
+    else:
+      print "Sublattice error in gSBulk"
+      
+  return C_int(gI,-pi/2,pi/2)
 
 
 def gBulk_kA(m,n,s,E):
@@ -65,11 +84,51 @@ def gBulk_kA(m,n,s,E):
   return C_int(int_temp,-pi/2,pi/2)
 
 
-def gRib_Arm(nE,m1,n1,m2,n2,s,E,E0=0.0):
-  """An interace to the FORTRAN armchair ribbon GF.
-  The E0 is starting to annoy me."""
-  GF = FMod.grib_arm(nE,m1,n1,m2,n2,s,E,E0,t)
-  return GF
+def gRib_Arm(nE,m1,n1,m2,n2,s,E):
+  """Calculates the GF for a nanoribbon, want to incorporate strain at some point"""
+  def gterm(ky):
+    q = acos( (E**2 - t2**2 - 4.0*t1**2 *cos(ky)**2)/(4.0*t1*t2 *cos(ky) ) )
+    if q.imag < 0.0: q = -q
+
+    Const = 1j/(2.0*nE*t1*t2)
+    Den = cos(ky)*sin(q)
+
+    if s == 0:
+      sig = copysign(1,m2+n2-m1-n1)
+      return Const*E*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
+    elif s == 1:
+      sig = copysign(1,m2+n2-m1-n1)
+      f = t2 + 2.0*t1*cos(ky)*exp(sig*1j*q)
+      return Const*f*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
+    elif s == -1:
+      sig = copysign(1,m2+n2-m1-n1-1)
+      ft = t2 + 2.0*t1*cos(ky)*exp(-sig*1j*q)
+      return Const*ft*exp( 1j*sig*q*(m2+n2-m1-n1) )*sin(ky*(m2-n2))*sin(ky*(m1-n1))/Den 
+    else:
+      print 'Sublattice error in gRib_Arm'
+  
+  def limit_term(ky):
+    if s == 0:
+      N_ab = E
+    elif (s == 1) or (s == -1):
+      N_ab = t2
+    else:
+      print 'Sublattice error in gRib_Arm'
+      
+    return 2.0*N_ab*sin(ky*(m2-n2))*sin(ky*(m1-n1))/( nE*( E**2 - t2**2 ) )
+  
+  g = 0.0
+  if nE % 2 == 0:
+    for j in range(1,nE):
+      if j == nE/2: continue		# Avoid singularities
+      g += gterm(pi*j/nE)
+    if m2+n2-m1-n1 == 0:
+      g += limit_term(pi/2)
+  else: 
+    for j in range(1,nE):
+      g += gterm(pi*j/nE)
+      
+  return g
 
 
 def gTube_Arm(nC,m,n,s,E):
