@@ -1,39 +1,12 @@
 # Contains a set of routines for building recursive structures.
 # Mostly focused on armchair nanoribbons
 # The N numbering convention is used everywhere unless noted.
-from numpy import dot
 from GF import *
+from numpy import dot
 import random
 from itertools import combinations
-from math import exp as expRe
 
 rtol = 1.0e-8		# Default tolerance for recursive methods. This tolerance is chosen to eliminate the zero, and is picked purely by observation. 
-Seps = 0.01	# The epsilon for strain
-Ssigma = 0.165		# Poisson's ration in graphene
-Salpha = 3.37		# A strain constant, taken from the literature
-
-
-def SHoppingGen(ratio1,ratio2):
-  """Calculates the hopping integrals t1, t2 given the ratio of the relevant bond lengths to the pristine length."""
-  t1 = t*expRe(-Salpha*(ratio1-1.0))
-  t2 = t*expRe(-Salpha*(ratio2-1.0))
-  return t1, t2
-
-
-def SHoppingZ(Seps,Ssigma):
-  """Gets the correct bond length ratios for zigzag strain"""
-  ratio1 = 1.0 + 3.0*Seps/4.0 - Seps*Ssigma/4.0	# R1/R0
-  ratio2 = 1.0 - Seps*Ssigma	# R2/R0
-  return SHoppingGen(ratio1,ratio2)
-
-
-def SHoppingA(Seps,Ssigma):
-  """Gets the correct bond length ratios for armchair strain"""
-  ratio1 = 1.0 + Seps/4.0 - 3.0/4.0*Seps*Ssigma	# R1/R0
-  ratio2 = 1.0 + Seps	# R2/R0
-  return SHoppingGen(ratio1,ratio2)
-
-
 
 def choose(n, k):
   """A fast way to calculate binomial coefficients by Andrew Dalke (contrib)."""
@@ -446,19 +419,18 @@ def DOSGNR(N,E):
 
 
 if __name__ == "__main__":  
-  #t1 = t2 = t
-  t1,t2 = SHoppingA(Seps,Ssigma)
-  N = 32
-  BigImpList = [[2]]
+  print t1,t2
+  #N = 32
+  #BigImpList = [[2]]
   
-  Elist = np.linspace(-0.1,0.1,201)
-  KSlist = [KuboSubs(N,E,BigImpList) for E in Elist]
-  KTlist = [KuboTop(N,E,BigImpList) for E in Elist]
-  KClist = [KuboCenter(N,E,BigImpList) for E in Elist]
-  pl.plot(Elist.real,KSlist,label='Subs')
-  pl.plot(Elist.real,KTlist,label='Top')
-  pl.plot(Elist.real,KClist,label='Center')
-  pl.legend()
-  pl.savefig('plot.png')
-  pl.show()
+  #Elist = np.linspace(-0.1,0.1,201)
+  #KSlist = [KuboSubs(N,E,BigImpList) for E in Elist]
+  #KTlist = [KuboTop(N,E,BigImpList) for E in Elist]
+  #KClist = [KuboCenter(N,E,BigImpList) for E in Elist]
+  #pl.plot(Elist.real,KSlist,label='Subs')
+  #pl.plot(Elist.real,KTlist,label='Top')
+  #pl.plot(Elist.real,KClist,label='Center')
+  #pl.legend()
+  #pl.savefig('plot.png')
+  #pl.show()
 	

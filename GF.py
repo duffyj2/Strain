@@ -1,30 +1,14 @@
 """Green's functions for various systems"""
 import FMod
-from scipy.integrate		import quad
-from scipy.optimize		import newton
+from config 			import *
 import numpy 			as np
 import pylab 			as pl
+from scipy.integrate		import quad
+from scipy.optimize		import newton
 from numpy.linalg		import inv
 from cmath			import sin, cos, log, acos, asin, sqrt, exp, pi
 from math			import copysign
 from functools import partial
-import sys
-import time
-
-global EF
-# math parameters
-hbar = 1.0
-eta = 1.0e-4
-# material parameters
-t = -1.0
-EF = 0.0
-wf=EF	# This needs a lot of thought/work
-eps_imp = 1.0
-tau = -1.0
-U = 10.0
-hw0 = 1.0e-3	# A default value for the Zeeman field. 
-dtol = 1.0e-6		# Stands for "default tolerance". Could be better
-
 
 def C_int(f,lim1,lim2):
   int_re = quad(lambda x: f(x).real, lim1, lim2, epsabs=0.0, epsrel=1.0e-4, limit=200 )
