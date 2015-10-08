@@ -39,9 +39,10 @@ dtol = 1.0e-6		# Stands for "default tolerance". Could be better
 wf=EF	# This needs a lot of thought/work
 
 # Strain parameters
-Seps = 0.00	# The epsilon for strain
+Seps = 0.1	# The epsilon for strain
 Ssigma = 0.165		# Poisson's ration in graphene
 Salpha = 3.37		# A strain constant, taken from the literature
 
 t1,t2 = SHoppingA(Seps,Ssigma)
+tau1,tau2 = SHoppingA(Seps,Ssigma)
 

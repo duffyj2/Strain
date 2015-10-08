@@ -98,10 +98,16 @@ def HArmStripCenter(N,ImpList):
     H[2*N+i,2*N+i] = eps_imp
     if k < N:
       for j in range(3) + range(N,N+3):
-	H[2*N+i,k+j] = H[k+j,2*N+i] = tau
+	if j in [0,2] + [N,N+2]:
+	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau1
+	else:
+	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau2
     if k > N:
       for j in range(3):
-	H[2*N+i,k+j] = H[k+j,2*N+i] = tau
+	if j in [0,2] + [N,N+2]:
+	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau1
+	else:
+	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau2
   return H
 
 
@@ -128,7 +134,10 @@ def VArmStripCenter(N,ImpList):
   for i,k in enumerate(ImpList):
     if k > N:
       for j in range(3):
-	VLR[2*N+i,k-N+j] = VRL[k-N+j,2*N+i] = tau
+	if j in [0,2] + [N,N+2]:
+	  VLR[2*N+i,k-N+j] = VRL[k-N+j,2*N+i] = tau1
+	else:
+	  VLR[2*N+i,k-N+j] = VRL[k-N+j,2*N+i] = tau2
   return VLR, VRL
 
 
@@ -419,6 +428,13 @@ def DOSGNR(N,E):
 
 
 if __name__ == "__main__":  
+  #N = 7
+  #ImpList = [N+1]
+  #print tau1,tau2
+  #VLR,VRL = VArmStripCenter(N,ImpList)
+  #print VLR[2*N,:]
+  
+  
   N = 5
   BigImpList = [[0]]
   

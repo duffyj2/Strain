@@ -268,5 +268,8 @@ def gSIZigtest(DA1,DA2,DZ,s_lat,E):		# You need to change the sublattice notatio
 
 
 if __name__ == "__main__":   
-  nE,m1,n1,m2,n2,s,E,E0 = 6,3,0,5,2,1,1.2+1j*eta,1.0
-  print gRib_Arm(nE,m1,n1,m2,n2,s,E)
+  nE,m1,n1,m2,n2,s,E = 6,1,0,1,0,0
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  DOSlist = [-gRib_Arm(nE,m1,n1,m2,n2,s,E).imag/pi for E in Elist]
+  pl.plot(Elist,DOSlist)
+  pl.show()
