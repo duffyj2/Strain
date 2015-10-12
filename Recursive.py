@@ -29,7 +29,7 @@ def CumAv(l):
 
 def PadZeros(M,Msize):
   """Pads a real 2d array with zeros up to the specified size"""
-  temp = np.zeros(Msize)
+  temp = np.zeros(Msize,M.dtype)
   temp[:M.shape[0],:M.shape[1]] = M
   return temp
 
@@ -97,17 +97,15 @@ def HArmStripCenter(N,ImpList):
   for i,k in enumerate(ImpList):
     H[2*N+i,2*N+i] = eps_imp
     if k < N:
-      for j in range(3) + range(N,N+3):
-	if j in [0,2] + [N,N+2]:
-	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau1
-	else:
-	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau2
+      for j in [0,2,N,N+2]:
+	H[2*N+i,k+j] = H[k+j,2*N+i] = tau1
+      for j in [1,N+1]:
+	H[2*N+i,k+j] = H[k+j,2*N+i] = tau2
     if k > N:
-      for j in range(3):
-	if j in [0,2] + [N,N+2]:
-	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau1
-	else:
-	  H[2*N+i,k+j] = H[k+j,2*N+i] = tau2
+      for j in [0,2]:
+	H[2*N+i,k+j] = H[k+j,2*N+i] = tau1
+      for j in [1]:
+	H[2*N+i,k+j] = H[k+j,2*N+i] = tau2
   return H
 
 
@@ -435,9 +433,9 @@ if __name__ == "__main__":
   #print VLR[2*N,:]
   
   
-  N = 5
+  N = 11
   BigImpList = [[0]]
-  
+
   Elist = np.linspace(-3.0,3.0,201)
   KSlist = [KuboSubs(N,E,BigImpList) for E in Elist]
   KTlist = [KuboTop(N,E,BigImpList) for E in Elist]

@@ -3,10 +3,25 @@ from numpy.linalg import norm
 from Recursive import *
 
 
-def gSubs1(nE,m,n,E):
-  s = 0
-  g = gRib_Arm(nE,m,n,m,n,s,E)
+def gGNRSubs1(nE,m,n,E):
+  g = gRib_Arm(nE,m,n,m,n,0,E)
   return Dyson1(g,eps_imp)
+
+
+def gGNRTop1(nE,m,n,E):      
+  """Calculates the onsite GF of a top adsorbed impurity in a GNR"""
+  # Introduce the connecting GFs
+  g = np.zeros((2,2),dtype=complex)
+  g[0,0] = gRib_Arm(nE,m,n,m,n,0,E)	# Connecting site
+  g[1,1] = 1.0/(E-eps_imp)		# Impurity site
+  
+  V = np.zeros([2,2],dtype=complex)	# Connecting perturbation
+  V[0,1] = V[1,0] = tau
+  
+  G = Dyson(g,V)
+  
+  # Return the part of the matrix that governs the impurity behaviour. 
+  return G[1,1]
 
 
 def GMx2Subs(nE,mI,nI,mP,nP,s,E):
@@ -51,31 +66,16 @@ def GMx1Center(nE,mC,nC,E):
   gMx[n-1,n-1] = 1.0/(E-eps_imp)	# Final site is that of the impurity
     
   V = np.zeros([n,n],dtype=complex)
-  V[:n-1,n-1] = tau
-  V[n-1,:n-1] = tau
+  V[0,n-1] = V[1,n-1] = V[3,n-1] = V[4,n-1] = tau1
+  V[n-1,0] = V[n-1,1] = V[n-1,3] = V[n-1,4] = tau1
+  
+  V[2,n-1] = V[5,n-1] = tau2
+  V[n-1,2] = V[n-1,5] = tau2
   
   GMx = Dyson(gMx,V)
   
   return GMx
 
-
-def GMxSubsRec(N,ImpList,E):
-  """Calculates the GF mx of a strip in an AGNR in the presence of subsitutional impurities"""
-  gL,gR,VLR,VRL = Leads(N,E)
-  H = HArmStrip(N,SubsList=ImpList)
-  gC = gGen(E,H)
-  gL = RecAdd(gL,gC,VLR,VRL)
-  g = RecAdd(gR,gL,VRL,VLR)
-  return g
-
-
-def GMxCenterRec(N,ImpList,E):
-  gL,gR,VLR,VRL = Leads(N,E)
-  H = HArmStrip(N,CenterList=ImpList)
-  gC = gGen(E,H)[:2*N,:2*N]
-  gL = RecAdd(gL,gC,VLR,VRL)
-  g = RecAdd(gR,gL,VRL,VLR)
-  return g
 
 
 def GMxCenterRec2(N,p,ImpList,E):
@@ -93,16 +93,56 @@ def GMxCenterRec2(N,p,ImpList,E):
   return g
 
 
-if __name__ == "__main__":  
-  nE = 9
-  mC, nC = 1,0
-  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
-  Glist = [-GMx1Center(nE,mC,nC,E)[6,6].imag/pi for E in Elist]
-  pl.plot(Elist,Glist)
-  pl.show()
-    
-  
+def GMxSubsRec(N,ImpList,E):
+  """Gets the GF of a strip containing a single substitutional impurity"""
+  gL,gR,VLR,VRL = Leads(N,E)
+  HM = HArmStripSubs(N,ImpList)
+  gM = gGen(E,HM)
+  gM = RecAdd(gL,gM,VLR,VRL)
+  gM = RecAdd(gR,gM,VRL,VLR)
+  return gM
 
+
+def GMxTopRec(N,ImpList,E):
+  """Gets the GF of a strip containing a single top-adsorbed impurity"""
+  gL,gR,VLR,VRL = Leads(N,E)
+  gL = PadZeros(gL,(11,11))
+  gR = PadZeros(gR,(11,11))
+  VLR = PadZeros(VLR,(11,11))
+  VRL = PadZeros(VRL,(11,11))
+  HM = HArmStripTop(N,ImpList)
+  gM = gGen(E,HM)
+  gM = RecAdd(gL,gM,VLR,VRL)
+  gM = RecAdd(gR,gM,VRL,VLR)
+  return gM
+
+
+def GMxCenterRec(N,ImpList,E):
+  """Gets the GF of a strip containing a single center adsorbed impurity, cannot deal with interstitial sites"""
+  gL,gR,VLR,VRL = Leads(N,E)
+  gL = PadZeros(gL,(11,11))
+  gR = PadZeros(gR,(11,11))
+  VLR = PadZeros(VLR,(11,11))
+  VRL = PadZeros(VRL,(11,11))
+  HM = HArmStripCenter(N,ImpList)
+  gM = gGen(E,HM)
+  gM = RecAdd(gL,gM,VLR,VRL)
+  gM = RecAdd(gR,gM,VRL,VLR)
+  return gM
+
+
+if __name__ == "__main__":  
+  nE = 6
+  m,n = 1,0
+  Elist = np.linspace(-3.0+1j*eta,3.0+1j*eta,201)
+  DOSSlist = [-gGNRSubs1(nE,m,n,E).imag/pi for E in Elist]
+  DOSTlist = [-gGNRTop1(nE,m,n,E).imag/pi for E in Elist]
+  DOSClist = [-GMx1Center(nE,1,0,E)[6,6].imag/pi for E in Elist]
+  pl.plot(Elist.real,DOSSlist,label='Subs')
+  pl.plot(Elist.real,DOSTlist,label='Top')
+  pl.plot(Elist.real,DOSClist,label='Center')
+  pl.legend()
+  pl.show()
 
   
 
