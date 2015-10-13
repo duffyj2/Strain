@@ -426,17 +426,10 @@ def DOSGNR(N,E):
 
 
 if __name__ == "__main__":  
-  #N = 7
-  #ImpList = [N+1]
-  #print tau1,tau2
-  #VLR,VRL = VArmStripCenter(N,ImpList)
-  #print VLR[2*N,:]
-  
-  
-  N = 11
-  BigImpList = [[0]]
+  N = 32
+  BigImpList = [[2]]
 
-  Elist = np.linspace(-3.0,3.0,201)
+  Elist = np.linspace(-0.5,0.5,201)
   KSlist = [KuboSubs(N,E,BigImpList) for E in Elist]
   KTlist = [KuboTop(N,E,BigImpList) for E in Elist]
   KClist = [KuboCenter(N,E,BigImpList) for E in Elist]
