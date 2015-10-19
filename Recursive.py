@@ -426,17 +426,21 @@ def DOSGNR(N,E):
 
 
 if __name__ == "__main__":  
-  N = 32
-  BigImpList = [[2]]
-
-  Elist = np.linspace(-0.5,0.5,201)
-  KSlist = [KuboSubs(N,E,BigImpList) for E in Elist]
-  KTlist = [KuboTop(N,E,BigImpList) for E in Elist]
-  KClist = [KuboCenter(N,E,BigImpList) for E in Elist]
-  pl.plot(Elist.real,KSlist,label='Subs')
-  pl.plot(Elist.real,KTlist,label='Top')
-  pl.plot(Elist.real,KClist,label='Center')
-  pl.legend()
-  pl.savefig('plot.png')
-  pl.show()
+  N = 5
+  p = 1
+  nimp = 0
+  
+  for N,p,nimp in [[5,1,1],[5,1,2],[5,2,1],[5,2,3],[8,2,5],[11,5,10]]:
+    Elist = np.linspace(-3.0,3.0,201)
+    CSlist = [ConfigAvSubsTotal(N,p,nimp,E) for E in Elist]
+    CTlist = [ConfigAvTopTotal(N,p,nimp,E) for E in Elist]
+    CClist = [ConfigAvCenterTotal(N,p,nimp,E) for E in Elist]
+    
+    pl.plot(Elist.real,CSlist,label='Subs')
+    pl.plot(Elist.real,CTlist,label='Top')
+    pl.plot(Elist.real,CClist,label='Center')
+    pl.legend()
+    pl.savefig('%g_%g_%g.png' % (N,p,nimp))
+    pl.clf()
+    #pl.show()
 	
